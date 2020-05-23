@@ -14,6 +14,8 @@ namespace FatalForceServer
     {
         private readonly ISocketManager _socketManager;
         private readonly IConnectionManager _connectionManager;
+        private readonly IClientManager _clientManager;
+
         private readonly ConcurrentQueue<Packet> _queue;
 
         private readonly int _checkClientsAvailableFrequency;
@@ -26,6 +28,7 @@ namespace FatalForceServer
 
             _socketManager = container.GetInstance<ISocketManager>();
             _connectionManager = container.GetInstance<IConnectionManager>();
+            _clientManager = container.GetInstance<IClientManager>();
 
             _queue = new ConcurrentQueue<Packet>();
             _checkClientsAvailableFrequency = config.CheckClientsAvailableFrequency;
@@ -88,7 +91,8 @@ namespace FatalForceServer
                     ///////////////////////////////
 
 
-                    await PingClients();
+                    await _clientManager.PingClientsAsync();
+
                     await Task.Delay(1000 / _updateRate);
 
                 }
@@ -99,38 +103,11 @@ namespace FatalForceServer
             }
         }
 
-        private async Task PingClients()
-        {
-            var pingPacket = new PingPacket();
-            await _socketManager.SendAsync(
-                            data:        pingPacket.Serialize(),
-                            recipients: _connectionManager.GetAllAvailableRecipients()
-                        );
-        }
-
         private async Task CheckClientsAvailable()
         {
             while (true)
             {
-                var recipients = _connectionManager.GetAllAvailableRecipients();
-
-                foreach (var recipient in recipients)
-                {
-                    var clientTimeSpanFromLastPing = DateTime.UtcNow - (new DateTime(recipient.LastPingTimeStamp));
-
-                    if (clientTimeSpanFromLastPing.TotalMilliseconds >= _allowedClientTimeOut)
-                    {
-                        _connectionManager.Disconnect(recipient.Id);
-
-                        var disconnectPacket = new DisconnectPacket(recipient.Id, "Connection timeout");
-
-                        await _socketManager.SendAsync(
-                                data:        disconnectPacket.Serialize(),
-                                recipients: _connectionManager.GetAllAvailableRecipients()
-                             );
-                    }
-                }
-
+                await _clientManager.CheckClientsAvailableAsync(_allowedClientTimeOut);
                 await Task.Delay(_checkClientsAvailableFrequency);
             }
         }

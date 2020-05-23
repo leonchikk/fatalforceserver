@@ -19,6 +19,7 @@ namespace FatalForceServer
                 {
                     services.RegisterSingleton<IConnectionManager, ConnectionManager>();
                     services.RegisterSingleton<ISocketManager, SocketManager>();
+                    services.RegisterSingleton<IClientManager, ClientManager>();
                 })
                 .Build();
 

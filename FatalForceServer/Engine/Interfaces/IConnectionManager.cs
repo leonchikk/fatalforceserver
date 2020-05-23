@@ -8,7 +8,7 @@ namespace FatalForceServer.Engine.Interfaces
         int AddConnection(ConnectionPacket connectionPacket);
         Client[] GetAllAvailableRecipients();
         Client GetClientById(int clidentId);
-        void Disconnect(int clientId);
+        void RemoveConnection(int clientId);
         void SetAsPinged(int clientId);
     }
 }

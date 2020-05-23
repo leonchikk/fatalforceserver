@@ -43,7 +43,7 @@ namespace FatalForceServer.Engine
             return _connections.Values.ToArray();
         }
 
-        public void Disconnect(int clientId)
+        public void RemoveConnection(int clientId)
         {
             _connections.TryRemove(clientId, out Client client);
 
