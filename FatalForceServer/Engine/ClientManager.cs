@@ -30,24 +30,19 @@ namespace FatalForceServer.Engine
                 {
                     _connectionManager.RemoveConnection(recipient.Id);
 
-                    var disconnectPacket = new DisconnectPacket(recipient.Id, "Connection timeout");
-
-                    await _socketManager.SendAsync(
-                            data: disconnectPacket.Serialize(),
-                            recipients: _connectionManager.GetAllAvailableRecipients()
-                         );
+                    await DisconnectAsync(recipient, "Connection timeout");
                 }
             }
         }
 
-        public async Task DisconnectAsync(Client client)
+        public async Task DisconnectAsync(Client client, string reason)
         {
-            throw new NotImplementedException();
-        }
+            var disconnectPacket = new DisconnectPacket(client.Id, reason);
 
-        public async Task KickClientAsync(Client client, string reason)
-        {
-            throw new NotImplementedException();
+            await _socketManager.SendAsync(
+                    data: disconnectPacket.Serialize(),
+                    recipients: _connectionManager.GetAllAvailableRecipients()
+                 );
         }
 
         public async Task PingClientsAsync()
