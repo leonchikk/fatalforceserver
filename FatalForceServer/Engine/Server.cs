@@ -24,7 +24,7 @@ namespace FatalForceServer
 
         public Server(Container container, ServerConfig config)
         {
-            Log.Info($"Starting the server on {config.Port} port");
+            Log.Info($"Starting the server on {config.Port} port with {config.Rate} rate");
 
             _socketManager = container.GetInstance<ISocketManager>();
             _connectionManager = container.GetInstance<IConnectionManager>();
@@ -47,6 +47,8 @@ namespace FatalForceServer
             Task listener = Task.Run(async () => await ListenAsync());
             Task processor = Task.Run(async () => await ProcessAsync());
             Task pingClients = Task.Run(async () => await CheckClientsAvailable());
+
+            Log.Info($"Starting listening and process incoming data.....");
 
             Task.WaitAll(listener, processor, pingClients);
         }

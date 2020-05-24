@@ -16,12 +16,20 @@ namespace FatalForceServer.Core.Packets
             return this;
         }
 
+        public Packet SetNickname(string nickname)
+        {
+            Nickname = nickname;
+            return this;
+        }
+
         public override Packet Deserialize(byte[] buffer)
         {
             using (var stream = new MemoryStream(buffer, 1, buffer.Length - 1))
             {
                 using (var binaryReader = new BinaryReader(stream))
                 {
+                    Id = binaryReader.ReadInt32();
+
                     var nickNameStringLength = binaryReader.ReadInt32();
                     var nickNameBytes = binaryReader.ReadBytes(nickNameStringLength);
 

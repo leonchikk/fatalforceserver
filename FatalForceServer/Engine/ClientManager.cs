@@ -20,17 +20,17 @@ namespace FatalForceServer.Engine
         //TODO Consider to refactor this
         public async Task CheckClientsAvailableAsync(long allowedTimeout)
         {
-            var recipients = _connectionManager.GetAllAvailableRecipients();
+            var allAvailableClients = _connectionManager.GetAllAvailableRecipients();
 
-            foreach (var recipient in recipients)
+            foreach (var client in allAvailableClients)
             {
-                var clientTimeSpanFromLastPing = DateTime.UtcNow - (new DateTime(recipient.LastPingTimeStamp));
+                var clientTimeSpanFromLastPing = DateTime.UtcNow - (new DateTime(client.LastPingTimeStamp));
 
                 if (clientTimeSpanFromLastPing.TotalMilliseconds >= allowedTimeout)
                 {
-                    _connectionManager.RemoveConnection(recipient.Id);
+                    _connectionManager.RemoveConnection(client.Id);
 
-                    await DisconnectAsync(recipient, "Connection timeout");
+                    await DisconnectAsync(client, "Connection timeout");
                 }
             }
         }
