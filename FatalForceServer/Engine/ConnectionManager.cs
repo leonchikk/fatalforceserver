@@ -21,21 +21,24 @@ namespace FatalForceServer.Engine
             _clientIdentifierCounter = 0;
         }
 
-        public int AddConnection(ConnectionPacket connectionPacket)
+        public Client AddConnection(ConnectionPacket connectionPacket)
         {
             _clientIdentifierCounter += 1;
 
-            _connections.TryAdd(_clientIdentifierCounter, new Client()
+            var newClient = new Client()
             {
                 Id = _clientIdentifierCounter,
                 EndPoint = connectionPacket.Header.Sender,
                 Nickname = connectionPacket.Nickname,
                 LastPingTimeStamp = DateTime.UtcNow.Ticks
-            });
+            };
+            newClient.InitPosition();
+
+            _connections.TryAdd(_clientIdentifierCounter, newClient);
 
             Log.Info($"{connectionPacket.Nickname} has been connected");
 
-            return _clientIdentifierCounter;
+            return newClient;
         }
 
         public Client[] GetAllAvailableRecipients()

@@ -5,7 +5,7 @@ namespace FatalForceServer.Engine.Interfaces
 {
     public interface IConnectionManager
     {
-        int AddConnection(ConnectionPacket connectionPacket);
+        Client AddConnection(ConnectionPacket connectionPacket);
         Client[] GetAllAvailableRecipients();
         Client GetClientById(int clidentId);
         void RemoveConnection(int clientId);

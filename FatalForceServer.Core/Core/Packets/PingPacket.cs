@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FatalForceServer.Core.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.IO;
 

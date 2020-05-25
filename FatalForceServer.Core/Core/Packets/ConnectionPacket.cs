@@ -1,6 +1,8 @@
-﻿using System;
+﻿using FatalForceServer.Core.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text;
 
 namespace FatalForceServer.Core.Packets
@@ -9,16 +11,26 @@ namespace FatalForceServer.Core.Packets
     {
         public int Id { get; set; }
         public string Nickname { get; set; }
+        public float XPosition { get; set; }
+        public float YPosition { get; set; }
 
-        public Packet SetIdentifier(int id)
+        public ConnectionPacket SetIdentifier(int id)
         {
             Id = id;
             return this;
         }
 
-        public Packet SetNickname(string nickname)
+        public ConnectionPacket SetNickname(string nickname)
         {
             Nickname = nickname;
+            return this;
+        }
+
+        public ConnectionPacket SetPosition(Vector2 position)
+        {
+            XPosition = position.X;
+            YPosition = position.Y;
+
             return this;
         }
 
@@ -33,7 +45,10 @@ namespace FatalForceServer.Core.Packets
                     var nickNameStringLength = binaryReader.ReadInt32();
                     var nickNameBytes = binaryReader.ReadBytes(nickNameStringLength);
 
-                    this.Nickname = Encoding.UTF8.GetString(nickNameBytes);
+                    XPosition = binaryReader.ReadSingle();
+                    YPosition = binaryReader.ReadSingle();
+
+                    Nickname = Encoding.UTF8.GetString(nickNameBytes);
 
                     return this;
                 }
@@ -48,6 +63,8 @@ namespace FatalForceServer.Core.Packets
             data.AddRange(BitConverter.GetBytes(Id));
             data.AddRange(BitConverter.GetBytes(Nickname.Length));
             data.AddRange(Encoding.UTF8.GetBytes(Nickname));
+            data.AddRange(BitConverter.GetBytes(XPosition));
+            data.AddRange(BitConverter.GetBytes(YPosition));
 
             return data.ToArray();
         }

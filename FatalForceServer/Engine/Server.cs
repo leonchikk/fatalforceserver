@@ -67,15 +67,17 @@ namespace FatalForceServer
                             var connectionPacket = queueItem as ConnectionPacket;
                             var acceptPacket = new AcceptConnectionPacket();
 
-                            var clientId = _connectionManager.AddConnection(connectionPacket);
-                            var connectedClient = _connectionManager.GetClientById(clientId);
+                            var addedClient = _connectionManager.AddConnection(connectionPacket);
+                            var connectedClient = _connectionManager.GetClientById(addedClient.Id);
 
-                            await _socketManager.SendAsync(acceptPacket.SetIdentifier(clientId)
+                            await _socketManager.SendAsync(acceptPacket.SetIdentifier(addedClient.Id)
+                                                                       .SetPosition(addedClient.Position)
                                                                        .Serialize(),
                                                            connectedClient);
 
                             await _socketManager.SendAsync(connectionPacket
-                                                                        .SetIdentifier(clientId)
+                                                                        .SetIdentifier(addedClient.Id)
+                                                                        .SetPosition(addedClient.Position)
                                                                         .Serialize(),
                                 recipients: _connectionManager.GetAllAvailableRecipients(),
                                 except:     connectedClient

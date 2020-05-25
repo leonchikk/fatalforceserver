@@ -1,16 +1,28 @@
-﻿using System;
+﻿using FatalForceServer.Core.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 namespace FatalForceServer.Core.Packets
 {
     public class AcceptConnectionPacket : Packet
     {
         public int Id { get; set; }
+        public float XPosition { get; set; }
+        public float YPosition { get; set; }
 
-        public Packet SetIdentifier(int id)
+        public AcceptConnectionPacket SetIdentifier(int id)
         {
             Id = id;
+            return this;
+        }
+
+        public AcceptConnectionPacket SetPosition(Vector2 position)
+        {
+            XPosition = position.X;
+            YPosition = position.Y;
+
             return this;
         }
 
@@ -21,6 +33,8 @@ namespace FatalForceServer.Core.Packets
                 using (var binaryReader = new BinaryReader(stream))
                 {
                     Id = binaryReader.ReadInt32();
+                    XPosition = binaryReader.ReadSingle();
+                    YPosition = binaryReader.ReadSingle();
 
                     return this;
                 }
@@ -33,6 +47,8 @@ namespace FatalForceServer.Core.Packets
 
             data.Add((byte)PacketTypeEnum.AcceptConnection);
             data.AddRange(BitConverter.GetBytes(Id));
+            data.AddRange(BitConverter.GetBytes(XPosition));
+            data.AddRange(BitConverter.GetBytes(YPosition));
 
             return data.ToArray();
         }

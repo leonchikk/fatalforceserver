@@ -1,4 +1,4 @@
-﻿namespace FatalForceServer.Core.Packets
+﻿namespace FatalForceServer.Core.Enumerations
 {
     public enum PacketTypeEnum
     {

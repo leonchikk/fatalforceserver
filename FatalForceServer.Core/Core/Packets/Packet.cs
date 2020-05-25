@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FatalForceServer.Core.Enumerations;
+using System.Net;
 
 namespace FatalForceServer.Core.Packets
 {
