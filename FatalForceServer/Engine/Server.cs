@@ -6,6 +6,7 @@ using FatalForceServer.Engine.Models;
 using SimpleInjector;
 using System;
 using System.Collections.Concurrent;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace FatalForceServer
@@ -15,6 +16,7 @@ namespace FatalForceServer
         private readonly ISocketManager _socketManager;
         private readonly IConnectionManager _connectionManager;
         private readonly IClientManager _clientManager;
+        private readonly IGameStateManager _gameStateManager;
 
         private readonly ConcurrentQueue<Packet> _queue;
 
@@ -24,13 +26,15 @@ namespace FatalForceServer
 
         public Server(Container container, ServerConfig config)
         {
-            Log.Info($"Starting the server on {config.Port} port with {config.Rate} rate");
+            Log.Info($"Starting the server on {config.Port} port with rate {config.Rate}");
+
+            _queue = new ConcurrentQueue<Packet>();
 
             _socketManager = container.GetInstance<ISocketManager>();
             _connectionManager = container.GetInstance<IConnectionManager>();
             _clientManager = container.GetInstance<IClientManager>();
+            _gameStateManager = container.GetInstance<IGameStateManager>();
 
-            _queue = new ConcurrentQueue<Packet>();
             _checkClientsAvailableFrequency = config.CheckClientsAvailableFrequency;
             _allowedClientTimeOut = config.AllowedClientTimeOut;
             _updateRate = config.Rate;
@@ -48,7 +52,7 @@ namespace FatalForceServer
             Task processor = Task.Run(async () => await ProcessAsync());
             Task pingClients = Task.Run(async () => await CheckClientsAvailable());
 
-            Log.Info($"Starting listening and process incoming data.....");
+            Log.Info($"Starting listening and processing incoming data.....");
 
             Task.WaitAll(listener, processor, pingClients);
         }
@@ -70,14 +74,17 @@ namespace FatalForceServer
                             var addedClient = _connectionManager.AddConnection(connectionPacket);
                             var connectedClient = _connectionManager.GetClientById(addedClient.Id);
 
+                            _gameStateManager.AddPlayer(connectedClient.Id);
+
+                            var currentWorldState = _gameStateManager.GetLastWorldState();
+
                             await _socketManager.SendAsync(acceptPacket.SetIdentifier(addedClient.Id)
-                                                                       .SetPosition(addedClient.Position)
+                                                                       .SetWorldState(currentWorldState)
                                                                        .Serialize(),
                                                            connectedClient);
 
                             await _socketManager.SendAsync(connectionPacket
                                                                         .SetIdentifier(addedClient.Id)
-                                                                        .SetPosition(addedClient.Position)
                                                                         .Serialize(),
                                 recipients: _connectionManager.GetAllAvailableRecipients(),
                                 except:     connectedClient
@@ -95,6 +102,7 @@ namespace FatalForceServer
                     ///////////////////////////////
 
 
+                    await _gameStateManager.SendWorldStateToClients();
                     await _clientManager.PingClientsAsync();
 
                     await Task.Delay(1000 / _updateRate);

@@ -5,7 +5,7 @@ namespace FatalForceServer.Engine.Interfaces
 {
     public interface IClientManager
     {
-        Task DisconnectAsync(Client client, string reason);
+        Task DisconnectAsync(ClientConnection client, string reason);
         Task PingClientsAsync();
         Task CheckClientsAvailableAsync(long allowedTimeout);
     }

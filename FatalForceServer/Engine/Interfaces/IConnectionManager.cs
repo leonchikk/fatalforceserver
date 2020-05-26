@@ -5,9 +5,9 @@ namespace FatalForceServer.Engine.Interfaces
 {
     public interface IConnectionManager
     {
-        Client AddConnection(ConnectionPacket connectionPacket);
-        Client[] GetAllAvailableRecipients();
-        Client GetClientById(int clidentId);
+        ClientConnection AddConnection(ConnectionPacket connectionPacket);
+        ClientConnection[] GetAllAvailableRecipients();
+        ClientConnection GetClientById(int clidentId);
         void RemoveConnection(int clientId);
         void SetAsPinged(int clientId);
     }

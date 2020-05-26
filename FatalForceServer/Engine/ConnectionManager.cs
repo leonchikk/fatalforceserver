@@ -11,28 +11,27 @@ namespace FatalForceServer.Engine
     public class ConnectionManager: IConnectionManager
     {
         private readonly ISocketManager _socketManager;
-        private readonly ConcurrentDictionary<int, Client> _connections;
+        private readonly ConcurrentDictionary<int, ClientConnection> _connections;
         private int _clientIdentifierCounter;
 
         public ConnectionManager(ISocketManager socketManager)
         {
             _socketManager = socketManager;
-            _connections = new ConcurrentDictionary<int, Client>();
+            _connections = new ConcurrentDictionary<int, ClientConnection>();
             _clientIdentifierCounter = 0;
         }
 
-        public Client AddConnection(ConnectionPacket connectionPacket)
+        public ClientConnection AddConnection(ConnectionPacket connectionPacket)
         {
             _clientIdentifierCounter += 1;
 
-            var newClient = new Client()
+            var newClient = new ClientConnection()
             {
                 Id = _clientIdentifierCounter,
                 EndPoint = connectionPacket.Header.Sender,
                 Nickname = connectionPacket.Nickname,
                 LastPingTimeStamp = DateTime.UtcNow.Ticks
             };
-            newClient.InitPosition();
 
             _connections.TryAdd(_clientIdentifierCounter, newClient);
 
@@ -41,14 +40,14 @@ namespace FatalForceServer.Engine
             return newClient;
         }
 
-        public Client[] GetAllAvailableRecipients()
+        public ClientConnection[] GetAllAvailableRecipients()
         {
             return _connections.Values.ToArray();
         }
 
         public void RemoveConnection(int clientId)
         {
-            _connections.TryRemove(clientId, out Client client);
+            _connections.TryRemove(clientId, out ClientConnection client);
 
             Log.Info($"{client.Nickname} has been disconnected");
         }
@@ -63,7 +62,7 @@ namespace FatalForceServer.Engine
             client.LastPingTimeStamp = DateTime.UtcNow.Ticks;
         }
 
-        public Client GetClientById(int clidentId)
+        public ClientConnection GetClientById(int clidentId)
         {
             return _connections[clidentId];
         }

@@ -1,16 +1,15 @@
-﻿using FatalForceServer.Core.Enumerations;
+﻿using FatalForceServer.Core.Core.Models;
+using FatalForceServer.Core.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Numerics;
 
 namespace FatalForceServer.Core.Packets
 {
     public class AcceptConnectionPacket : Packet
     {
         public int Id { get; set; }
-        public float XPosition { get; set; }
-        public float YPosition { get; set; }
+        public WorldState WorldState{ get; set; }
 
         public AcceptConnectionPacket SetIdentifier(int id)
         {
@@ -18,11 +17,9 @@ namespace FatalForceServer.Core.Packets
             return this;
         }
 
-        public AcceptConnectionPacket SetPosition(Vector2 position)
+        public AcceptConnectionPacket SetWorldState(WorldState worldState)
         {
-            XPosition = position.X;
-            YPosition = position.Y;
-
+            WorldState = worldState;
             return this;
         }
 
@@ -33,8 +30,6 @@ namespace FatalForceServer.Core.Packets
                 using (var binaryReader = new BinaryReader(stream))
                 {
                     Id = binaryReader.ReadInt32();
-                    XPosition = binaryReader.ReadSingle();
-                    YPosition = binaryReader.ReadSingle();
 
                     return this;
                 }
@@ -45,10 +40,12 @@ namespace FatalForceServer.Core.Packets
         {
             var data = new List<byte>();
 
+            var worldStateBytes = WorldState.Serialize();
+
             data.Add((byte)PacketTypeEnum.AcceptConnection);
             data.AddRange(BitConverter.GetBytes(Id));
-            data.AddRange(BitConverter.GetBytes(XPosition));
-            data.AddRange(BitConverter.GetBytes(YPosition));
+            data.AddRange(BitConverter.GetBytes(worldStateBytes.Length));
+            data.AddRange(worldStateBytes);
 
             return data.ToArray();
         }

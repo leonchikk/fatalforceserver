@@ -9,8 +9,8 @@ namespace FatalForceServer.Engine.Interfaces
     {
         void Configure(ServerConfig config);
         Task<SocketReceivedResult> ReceiveFromAsync();
-        Task SendAsync(byte[] data, Client recipient);
-        Task SendAsync(byte[] data, IEnumerable<Client> recipients);
-        Task SendAsync(byte[] data, IEnumerable<Client> recipients, params Client[] except);
+        Task SendAsync(byte[] data, ClientConnection recipient);
+        Task SendAsync(byte[] data, IEnumerable<ClientConnection> recipients);
+        Task SendAsync(byte[] data, IEnumerable<ClientConnection> recipients, params ClientConnection[] except);
     }
 }

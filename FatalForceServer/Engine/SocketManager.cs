@@ -34,12 +34,12 @@ namespace FatalForceServer.Engine
             };
         }
 
-        public async Task SendAsync(byte[] data, Client recipient)
+        public async Task SendAsync(byte[] data, ClientConnection recipient)
         {
             await _socket.SendAsync(data, recipient.EndPoint);
         }
 
-        public async Task SendAsync(byte[] data, IEnumerable<Client> recipients)
+        public async Task SendAsync(byte[] data, IEnumerable<ClientConnection> recipients)
         {
             foreach (var recipient in recipients)
             {
@@ -47,7 +47,7 @@ namespace FatalForceServer.Engine
             }
         }
 
-        public async Task SendAsync(byte[] data, IEnumerable<Client> recipients, params Client[] except)
+        public async Task SendAsync(byte[] data, IEnumerable<ClientConnection> recipients, params ClientConnection[] except)
         {
             recipients = recipients.Except(except);
 

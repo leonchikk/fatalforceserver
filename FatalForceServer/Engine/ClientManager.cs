@@ -35,7 +35,7 @@ namespace FatalForceServer.Engine
             }
         }
 
-        public async Task DisconnectAsync(Client client, string reason)
+        public async Task DisconnectAsync(ClientConnection client, string reason)
         {
             var disconnectPacket = new DisconnectPacket(client.Id, reason);
 

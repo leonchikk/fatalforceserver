@@ -1,4 +1,5 @@
 ﻿using FatalForceServer.Core;
+using FatalForceServer.Core.Enumerations;
 using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Models;
 using System.IO;

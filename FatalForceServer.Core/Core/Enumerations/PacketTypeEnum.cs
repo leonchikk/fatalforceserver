@@ -5,6 +5,7 @@
         Connection = 1,
         AcceptConnection = 2,
         Disconnect = 3,
-        Ping = 4
+        Ping = 4,
+        WorldState = 5
     }
 }
