@@ -1,5 +1,5 @@
-﻿using FatalForceServer.Core.Core.Enumerations;
-using FatalForceServer.Core.Core.Models;
+﻿using FatalForceServer.Core.Enumerations;
+using FatalForceServer.Core.Models;
 using System.Numerics;
 using System.Threading.Tasks;
 

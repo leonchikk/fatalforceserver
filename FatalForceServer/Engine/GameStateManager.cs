@@ -1,6 +1,6 @@
-﻿using FatalForceServer.Core.Core.Enumerations;
-using FatalForceServer.Core.Core.Models;
-using FatalForceServer.Core.Core.Packets;
+﻿using FatalForceServer.Core.Enumerations;
+using FatalForceServer.Core.Models;
+using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;

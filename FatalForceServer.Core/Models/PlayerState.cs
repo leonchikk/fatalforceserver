@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FatalForceServer.Core.Core.Models
+namespace FatalForceServer.Core.Models
 {
     public class PlayerState
     {

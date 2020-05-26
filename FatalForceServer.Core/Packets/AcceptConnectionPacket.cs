@@ -1,4 +1,4 @@
-﻿using FatalForceServer.Core.Core.Models;
+﻿using FatalForceServer.Core.Models;
 using FatalForceServer.Core.Enumerations;
 using System;
 using System.Collections.Generic;
@@ -25,11 +25,17 @@ namespace FatalForceServer.Core.Packets
 
         public override Packet Deserialize(byte[] buffer)
         {
+            var worldState = new WorldState();
+
             using (var stream = new MemoryStream(buffer, 1, buffer.Length - 1))
             {
                 using (var binaryReader = new BinaryReader(stream))
                 {
                     Id = binaryReader.ReadInt32();
+
+                    var worldStateBytes = binaryReader.ReadBytes(buffer.Length - (int)binaryReader.BaseStream.Position);
+
+                    WorldState = worldState.Deserialize(worldStateBytes);
 
                     return this;
                 }

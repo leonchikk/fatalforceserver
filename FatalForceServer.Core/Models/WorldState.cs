@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace FatalForceServer.Core.Core.Models
+namespace FatalForceServer.Core.Models
 {
     public class WorldState
     {

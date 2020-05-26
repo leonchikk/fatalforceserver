@@ -1,10 +1,9 @@
-﻿using FatalForceServer.Core.Core.Models;
+﻿using FatalForceServer.Core.Models;
 using FatalForceServer.Core.Enumerations;
-using FatalForceServer.Core.Packets;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FatalForceServer.Core.Core.Packets
+namespace FatalForceServer.Core.Packets
 {
     public class WorldStatePacket : Packet
     {

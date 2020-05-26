@@ -1,4 +1,4 @@
-﻿namespace FatalForceServer.Core.Core.Enumerations
+﻿namespace FatalForceServer.Core.Enumerations
 {
     public enum PlayerMovementTypeEnum
     {
