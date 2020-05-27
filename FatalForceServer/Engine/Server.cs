@@ -6,6 +6,7 @@ using FatalForceServer.Engine.Models;
 using SimpleInjector;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FatalForceServer
@@ -124,9 +125,11 @@ namespace FatalForceServer
         {
             while (true)
             {
-                var notAvailableClients = await _clientManager.CheckClientsAvailableAsync(_allowedClientTimeOut);
+                var notAvailableClients = _clientManager.GetNotAvailableClients(_allowedClientTimeOut);
 
-                _gameStateManager.RemovePlayers(notAvailableClients);
+                await _clientManager.DisconnectAsync(notAvailableClients, "Connection timeout");
+
+                _gameStateManager.RemovePlayers(notAvailableClients.Select(client => client.Id));
 
                 await Task.Delay(_checkClientsAvailableFrequency);
             }

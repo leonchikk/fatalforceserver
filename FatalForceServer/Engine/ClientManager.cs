@@ -18,10 +18,9 @@ namespace FatalForceServer.Engine
             _connectionManager = connectionManager;
         }
 
-        //TODO Consider to refactor this
-        public async Task<IEnumerable<int>> CheckClientsAvailableAsync(long allowedTimeout)
+        public IEnumerable<ClientConnection> GetNotAvailableClients(long allowedTimeout)
         {
-            var notAvailableClients = new List<int>();
+            var notAvailableClients = new List<ClientConnection>();
             var allAvailableClients = _connectionManager.GetAllAvailableRecipients();
 
             foreach (var client in allAvailableClients)
@@ -30,18 +29,25 @@ namespace FatalForceServer.Engine
 
                 if (clientTimeSpanFromLastPing.TotalMilliseconds >= allowedTimeout)
                 {
-                    _connectionManager.RemoveConnection(client.Id);
-                    notAvailableClients.Add(client.Id);
-
-                    await DisconnectAsync(client, "Connection timeout");
+                    notAvailableClients.Add(client);
                 }
             }
 
             return notAvailableClients;
         }
 
+        public async Task DisconnectAsync(IEnumerable<ClientConnection> clients, string reason)
+        {
+            foreach (var client in clients)
+            {
+                await DisconnectAsync(client, reason);
+            }
+        }
+
         public async Task DisconnectAsync(ClientConnection client, string reason)
         {
+            _connectionManager.RemoveConnection(client.Id);
+
             var disconnectPacket = new DisconnectPacket(client.Id, reason);
 
             await _socketManager.SendAsync(
