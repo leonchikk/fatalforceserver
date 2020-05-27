@@ -1,6 +1,6 @@
 ﻿namespace FatalForceServer.Core.Enumerations
 {
-    public enum PlayerMovementTypeEnum
+    public enum PlayerMovementDirectionEnum
     {
         Up = 0,
         Down = 1,

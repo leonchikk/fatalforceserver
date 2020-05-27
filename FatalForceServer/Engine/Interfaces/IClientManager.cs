@@ -1,4 +1,5 @@
 ﻿using FatalForceServer.Engine.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FatalForceServer.Engine.Interfaces
@@ -7,6 +8,6 @@ namespace FatalForceServer.Engine.Interfaces
     {
         Task DisconnectAsync(ClientConnection client, string reason);
         Task PingClientsAsync();
-        Task CheckClientsAvailableAsync(long allowedTimeout);
+        Task<IEnumerable<int>> CheckClientsAvailableAsync(long allowedTimeout);
     }
 }

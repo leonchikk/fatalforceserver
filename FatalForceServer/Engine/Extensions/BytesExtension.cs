@@ -38,6 +38,10 @@ namespace FatalForceServer.Engine.Extensions
                     receivedPacket = new DisconnectPacket();
                     break;
 
+                case PacketTypeEnum.Movement:
+                    receivedPacket = new MovementPacket();
+                    break;
+
                 default:
                     Log.Error("Unknown packet type, cannot handle them");
                     break;

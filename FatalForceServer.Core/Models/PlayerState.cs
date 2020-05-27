@@ -5,7 +5,7 @@ namespace FatalForceServer.Core.Models
 {
     public class PlayerState
     {
-        public float Speed { get; set; } = 3f;
+        public float Speed { get; set; } = 0.05f;
         public float X { get; set; }
         public float Y { get; set; }
         public int Id { get; set; }

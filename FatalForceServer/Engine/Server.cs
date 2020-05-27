@@ -6,7 +6,6 @@ using FatalForceServer.Engine.Models;
 using SimpleInjector;
 using System;
 using System.Collections.Concurrent;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace FatalForceServer
@@ -98,6 +97,12 @@ namespace FatalForceServer
                             _connectionManager.SetAsPinged(pingPacket.ClientId);
                         }
 
+                        if (queueItem is MovementPacket)
+                        {
+                            var movementPacket = queueItem as MovementPacket;
+
+                            _gameStateManager.MovePlayer(movementPacket.ClientId, movementPacket.Direction);
+                        }
                     }
                     ///////////////////////////////
 
@@ -119,7 +124,10 @@ namespace FatalForceServer
         {
             while (true)
             {
-                await _clientManager.CheckClientsAvailableAsync(_allowedClientTimeOut);
+                var notAvailableClients = await _clientManager.CheckClientsAvailableAsync(_allowedClientTimeOut);
+
+                _gameStateManager.RemovePlayers(notAvailableClients);
+
                 await Task.Delay(_checkClientsAvailableFrequency);
             }
         }

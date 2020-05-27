@@ -2,6 +2,7 @@
 using FatalForceServer.Core.Models;
 using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace FatalForceServer.Engine
             _lastWorldState.PlayersStates.Add(playerState);
         }
 
-        public void MovePlayer(int clientId, PlayerMovementTypeEnum direction)
+        public void MovePlayer(int clientId, PlayerMovementDirectionEnum direction)
         {
             var playerState = _lastWorldState.PlayersStates.FirstOrDefault(p => p.Id == clientId);
 
@@ -39,24 +40,24 @@ namespace FatalForceServer.Engine
 
             switch (direction)
             {
-                case PlayerMovementTypeEnum.Up:
+                case PlayerMovementDirectionEnum.Up:
 
-                    playerState.Y *= playerState.Speed;
+                    playerState.Y += playerState.Speed;
                     break;
 
-                case PlayerMovementTypeEnum.Down:
+                case PlayerMovementDirectionEnum.Down:
 
-                    playerState.Y *= -playerState.Speed;
+                    playerState.Y += -playerState.Speed;
                     break;
 
-                case PlayerMovementTypeEnum.Right:
+                case PlayerMovementDirectionEnum.Right:
 
-                    playerState.X *= playerState.Speed;
+                    playerState.X += playerState.Speed;
                     break;
 
-                case PlayerMovementTypeEnum.Left:
+                case PlayerMovementDirectionEnum.Left:
 
-                    playerState.X *= -playerState.Speed;
+                    playerState.X += -playerState.Speed;
                     break;
 
                 default:
@@ -86,6 +87,14 @@ namespace FatalForceServer.Engine
             await _socketManager.SendAsync(
                 data:        worldStatePacket.SetWorldState(_lastWorldState).Serialize(),
                 recipients: _connectionManager.GetAllAvailableRecipients());
+        }
+
+        public void RemovePlayers(IEnumerable<int> clientsIds)
+        {
+            foreach (var clientId in clientsIds)
+            {
+                RemovePlayer(clientId);
+            }
         }
     }
 }

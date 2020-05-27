@@ -33,7 +33,8 @@ namespace FatalForceServer.Core.Packets
                 {
                     Id = binaryReader.ReadInt32();
 
-                    var worldStateBytes = binaryReader.ReadBytes(buffer.Length - (int)binaryReader.BaseStream.Position);
+                    var worldStateBytesCount = binaryReader.ReadInt32();
+                    var worldStateBytes = binaryReader.ReadBytes(worldStateBytesCount);
 
                     WorldState = worldState.Deserialize(worldStateBytes);
 

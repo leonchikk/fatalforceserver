@@ -2,6 +2,7 @@
 using FatalForceServer.Core.Enumerations;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace FatalForceServer.Core.Packets
 {
@@ -23,7 +24,8 @@ namespace FatalForceServer.Core.Packets
             {
                 using (var binaryReader = new BinaryReader(stream))
                 {
-                    var worldStateBytes = binaryReader.ReadBytes(buffer.Length - 1);
+                    var worldStateBytesCount = binaryReader.ReadInt32();
+                    var worldStateBytes = binaryReader.ReadBytes(worldStateBytesCount);
 
                     WorldState = worldState.Deserialize(worldStateBytes);
 
@@ -35,9 +37,11 @@ namespace FatalForceServer.Core.Packets
         public override byte[] Serialize()
         {
             var bytes = new List<byte>();
+            var worldStateBytes = WorldState.Serialize();
 
             bytes.Add((byte)PacketTypeEnum.WorldState);
-            bytes.AddRange(WorldState.Serialize());
+            bytes.AddRange(BitConverter.GetBytes(worldStateBytes.Length));
+            bytes.AddRange(worldStateBytes);
 
             return bytes.ToArray();
         }
