@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logic\Interfaces\" />
+    <Folder Include="Logic\Commands\" />
+    <Folder Include="Logic\Handlers\" />
   </ItemGroup>
 </Project>

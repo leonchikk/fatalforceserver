@@ -3,6 +3,7 @@ using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Extensions;
 using FatalForceServer.Engine.Interfaces;
 using FatalForceServer.Engine.Models;
+using FatalForceServer.Logic;
 using SimpleInjector;
 using System;
 using System.Collections.Concurrent;
@@ -14,15 +15,12 @@ namespace FatalForceServer
     public class Server
     {
         private readonly ISocketManager _socketManager;
-        private readonly IConnectionManager _connectionManager;
         private readonly IClientManager _clientManager;
         private readonly IGameStateManager _gameStateManager;
+        private readonly IGameProcessManager _gameProcessManager;
 
         private readonly ConcurrentQueue<Packet> _queue;
-
-        private readonly int _checkClientsAvailableFrequency;
-        private readonly long _allowedClientTimeOut;
-        private readonly int _updateRate;
+        private readonly ServerConfig _config;
 
         public Server(Container container, ServerConfig config)
         {
@@ -31,13 +29,11 @@ namespace FatalForceServer
             _queue = new ConcurrentQueue<Packet>();
 
             _socketManager = container.GetInstance<ISocketManager>();
-            _connectionManager = container.GetInstance<IConnectionManager>();
             _clientManager = container.GetInstance<IClientManager>();
             _gameStateManager = container.GetInstance<IGameStateManager>();
+            _gameProcessManager = container.GetInstance<IGameProcessManager>();
 
-            _checkClientsAvailableFrequency = config.CheckClientsAvailableFrequency;
-            _allowedClientTimeOut = config.AllowedClientTimeOut;
-            _updateRate = config.Rate;
+            _config = config;
 
             Log.Info($"Configuring...");
 
@@ -63,55 +59,13 @@ namespace FatalForceServer
             {
                 try
                 {
-                    /////////////////////////////
                     while (_queue.TryDequeue(out Packet queueItem))
-                    {
-                        if (queueItem is ConnectionPacket)
-                        {
-                            var connectionPacket = queueItem as ConnectionPacket;
-                            var acceptPacket = new AcceptConnectionPacket();
-
-                            var addedClient = _connectionManager.AddConnection(connectionPacket);
-                            var connectedClient = _connectionManager.GetClientById(addedClient.Id);
-
-                            _gameStateManager.AddPlayer(connectedClient.Id);
-
-                            var currentWorldState = _gameStateManager.GetLastWorldState();
-
-                            await _socketManager.SendAsync(acceptPacket.SetIdentifier(addedClient.Id)
-                                                                       .SetWorldState(currentWorldState)
-                                                                       .Serialize(),
-                                                           connectedClient);
-
-                            await _socketManager.SendAsync(connectionPacket
-                                                                        .SetIdentifier(addedClient.Id)
-                                                                        .Serialize(),
-                                recipients: _connectionManager.GetAllAvailableRecipients(),
-                                except:     connectedClient
-                             );
-                        }
-
-                        if (queueItem is PingPacket)
-                        {
-                            var pingPacket = queueItem as PingPacket;
-
-                            _connectionManager.SetAsPinged(pingPacket.ClientId);
-                        }
-
-                        if (queueItem is MovementPacket)
-                        {
-                            var movementPacket = queueItem as MovementPacket;
-
-                            _gameStateManager.MovePlayer(movementPacket.ClientId, movementPacket.Direction);
-                        }
-                    }
-                    ///////////////////////////////
-
+                        await _gameProcessManager.ProcessIncomingPacketAsync(queueItem);
 
                     await _gameStateManager.SendWorldStateToClients();
                     await _clientManager.PingClientsAsync();
 
-                    await Task.Delay(1000 / _updateRate);
+                    await Task.Delay(1000 / _config.Rate);
 
                 }
                 catch (Exception ex) //TODO Rewrite this on that case if here's will be an aggregate exception
@@ -125,13 +79,13 @@ namespace FatalForceServer
         {
             while (true)
             {
-                var notAvailableClients = _clientManager.GetNotAvailableClients(_allowedClientTimeOut);
+                var notAvailableClients = _clientManager.GetNotAvailableClients(_config.AllowedClientTimeOut);
 
                 await _clientManager.DisconnectAsync(notAvailableClients, "Connection timeout");
 
                 _gameStateManager.RemovePlayers(notAvailableClients.Select(client => client.Id));
 
-                await Task.Delay(_checkClientsAvailableFrequency);
+                await Task.Delay(_config.CheckClientsAvailableFrequency);
             }
         }
 

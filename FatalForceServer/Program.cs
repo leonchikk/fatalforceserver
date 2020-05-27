@@ -1,5 +1,6 @@
 ﻿using FatalForceServer.Engine;
 using FatalForceServer.Engine.Interfaces;
+using FatalForceServer.Logic;
 
 namespace FatalForceServer
 {
@@ -22,6 +23,7 @@ namespace FatalForceServer
                     services.RegisterSingleton<ISocketManager, SocketManager>();
                     services.RegisterSingleton<IClientManager, ClientManager>();
                     services.RegisterSingleton<IGameStateManager, GameStateManager>();
+                    services.RegisterSingleton<IGameProcessManager, GameProcessManager>();
                 })
                 .Build();
 

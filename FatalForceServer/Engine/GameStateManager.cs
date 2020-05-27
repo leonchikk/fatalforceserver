@@ -13,7 +13,7 @@ namespace FatalForceServer.Engine
         private readonly ISocketManager _socketManager;
         private readonly IConnectionManager _connectionManager;
 
-        private WorldState _lastWorldState;
+        private readonly WorldState _lastWorldState;
 
         public GameStateManager(ISocketManager socketManager, IConnectionManager connectionManager)
         {
