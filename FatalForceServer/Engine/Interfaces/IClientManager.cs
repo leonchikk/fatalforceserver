@@ -8,7 +8,7 @@ namespace FatalForceServer.Engine.Interfaces
     {
         Task DisconnectAsync(IEnumerable<ClientConnection> clients, string reason);
         Task DisconnectAsync(ClientConnection client, string reason);
-        Task PingClientsAsync();
+        Task PingClientAsync(int clientId);
         IEnumerable<ClientConnection> GetNotAvailableClients(long allowedTimeout);
     }
 }

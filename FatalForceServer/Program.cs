@@ -15,7 +15,7 @@ namespace FatalForceServer
                     config.Port = 27015;
                     config.AllowedClientTimeOut = 2000;
                     config.CheckClientsAvailableFrequency = 100;
-                    config.Rate = 100;
+                    config.Rate = 3;
                 })
                 .ConfigureServices(services =>
                 {

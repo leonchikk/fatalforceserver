@@ -63,7 +63,6 @@ namespace FatalForceServer
                         await _gameProcessManager.ProcessIncomingPacketAsync(queueItem);
 
                     await _gameStateManager.SendWorldStateToClients();
-                    await _clientManager.PingClientsAsync();
 
                     await Task.Delay(1000 / _config.Rate);
 

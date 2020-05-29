@@ -56,12 +56,14 @@ namespace FatalForceServer.Engine
                  );
         }
 
-        public async Task PingClientsAsync()
+        public async Task PingClientAsync(int clientId)
         {
+            var recipient = _connectionManager.GetClientById(clientId);
+
             var pingPacket = new PingPacket();
             await _socketManager.SendAsync(
                             data: pingPacket.Serialize(),
-                            recipients: _connectionManager.GetAllAvailableRecipients()
+                            recipient: recipient
                         );
         }
     }

@@ -6,15 +6,18 @@ namespace FatalForceServer.Logic
 {
     public class GameProcessManager : IGameProcessManager
     {
+        private readonly IClientManager _clientManager;
         private readonly IConnectionManager _connectionManager;
         private readonly IGameStateManager _gameStateManager;
         private readonly ISocketManager _socketManager;
 
         public GameProcessManager(
+            IClientManager clientManager,
             IConnectionManager connectionManager,
             IGameStateManager gameStateManager,
             ISocketManager socketManager)
         {
+            _clientManager = clientManager;
             _connectionManager = connectionManager;
             _gameStateManager = gameStateManager;
             _socketManager = socketManager;
@@ -52,6 +55,8 @@ namespace FatalForceServer.Logic
                 var pingPacket = packet as PingPacket;
 
                 _connectionManager.SetAsPinged(pingPacket.ClientId);
+
+                await _clientManager.PingClientAsync(pingPacket.ClientId);
             }
 
             if (packet is MovementPacket)
