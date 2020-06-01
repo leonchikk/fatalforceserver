@@ -25,6 +25,7 @@ namespace FatalForceServer.Core.Packets
             {
                 using (var binaryReader = new BinaryReader(stream))
                 {
+                    ClientId = binaryReader.ReadInt32();
                     var reasonStringLength = binaryReader.ReadInt32();
                     var nickNameBytes = binaryReader.ReadBytes(reasonStringLength);
 
