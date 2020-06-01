@@ -7,6 +7,7 @@ namespace FatalForceServer.Core.Packets
 {
     public class MovementPacket : Packet
     {
+        public int PacketSequenceNumber { get; set; }
         public int ClientId { get; set; }
         public PlayerMovementDirectionEnum Direction { get; set; }
 
@@ -16,8 +17,9 @@ namespace FatalForceServer.Core.Packets
             {
                 using (var binaryReader = new BinaryReader(stream))
                 {
+                    PacketSequenceNumber = binaryReader.ReadInt32();
                     ClientId = binaryReader.ReadInt32();
-                    Direction = (PlayerMovementDirectionEnum) binaryReader.ReadByte();
+                    Direction = (PlayerMovementDirectionEnum)binaryReader.ReadByte();
 
                     return this;
                 }
@@ -29,6 +31,7 @@ namespace FatalForceServer.Core.Packets
             var data = new List<byte>();
 
             data.Add((byte)PacketTypeEnum.Movement);
+            data.AddRange(BitConverter.GetBytes(PacketSequenceNumber));
             data.AddRange(BitConverter.GetBytes(ClientId));
             data.Add((byte)Direction);
 

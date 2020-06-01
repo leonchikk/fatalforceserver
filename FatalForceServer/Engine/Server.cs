@@ -59,13 +59,14 @@ namespace FatalForceServer
             {
                 try
                 {
-                    while (_queue.TryDequeue(out Packet queueItem))
-                        await _gameProcessManager.ProcessIncomingPacketAsync(queueItem);
-
-                    await _gameStateManager.SendWorldStateToClients();
-
                     await Task.Delay(1000 / _config.Rate);
 
+                    while (_queue.TryDequeue(out Packet queueItem))
+                    {
+                        await _gameProcessManager.ProcessIncomingPacketAsync(queueItem);
+                    }
+
+                    await _gameStateManager.SendWorldStateToClients();
                 }
                 catch (Exception ex) //TODO Rewrite this on that case if here's will be an aggregate exception
                 {

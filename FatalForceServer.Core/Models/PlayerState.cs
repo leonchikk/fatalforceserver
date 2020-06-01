@@ -5,10 +5,11 @@ namespace FatalForceServer.Core.Models
 {
     public class PlayerState
     {
-        public float Speed { get; set; } = 0.05f;
+        public float Speed { get; set; } = 0.1f;
         public float X { get; set; }
         public float Y { get; set; }
         public int Id { get; set; }
+        public int LastPacketSequenceNumber { get; set; }
 
         public PlayerState() { }
         public PlayerState(int id)
@@ -23,6 +24,7 @@ namespace FatalForceServer.Core.Models
             bytes.AddRange(BitConverter.GetBytes(X));
             bytes.AddRange(BitConverter.GetBytes(Y));
             bytes.AddRange(BitConverter.GetBytes(Id));
+            bytes.AddRange(BitConverter.GetBytes(LastPacketSequenceNumber));
 
             return bytes.ToArray();
         }

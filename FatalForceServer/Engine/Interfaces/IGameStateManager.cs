@@ -11,7 +11,7 @@ namespace FatalForceServer.Engine.Interfaces
         void AddPlayer(int clientId);
         void RemovePlayer(int clientId);
         void RemovePlayers(IEnumerable<int> clientsIds);
-        void MovePlayer(int clientId, PlayerMovementDirectionEnum direction);
+        void MovePlayer(int clientId, int packetSequenceNumber, PlayerMovementDirectionEnum direction);
         WorldState GetLastWorldState();
         Task SendWorldStateToClients();
     }

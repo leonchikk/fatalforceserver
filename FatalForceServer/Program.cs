@@ -13,9 +13,9 @@ namespace FatalForceServer
                 {
                     config.BindingIP = "127.0.0.1";
                     config.Port = 27015;
-                    config.AllowedClientTimeOut = 2000;
+                    config.AllowedClientTimeOut = 3000;
                     config.CheckClientsAvailableFrequency = 100;
-                    config.Rate = 3;
+                    config.Rate = 100;
                 })
                 .ConfigureServices(services =>
                 {

@@ -34,10 +34,13 @@ namespace FatalForceServer.Core.Models
 
                     while (buffer.Length > index)
                     {
-                        var playerState = new PlayerState();
-                        playerState.X = binaryReader.ReadSingle();
-                        playerState.Y = binaryReader.ReadSingle();
-                        playerState.Id = binaryReader.ReadInt32();
+                        var playerState = new PlayerState
+                        {
+                            X = binaryReader.ReadSingle(),
+                            Y = binaryReader.ReadSingle(),
+                            Id = binaryReader.ReadInt32(),
+                            LastPacketSequenceNumber = binaryReader.ReadInt32()
+                        };
 
                         playersStates.Add(playerState);
 

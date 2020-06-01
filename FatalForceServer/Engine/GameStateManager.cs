@@ -1,4 +1,5 @@
-﻿using FatalForceServer.Core.Enumerations;
+﻿using FatalForceServer.Core;
+using FatalForceServer.Core.Enumerations;
 using FatalForceServer.Core.Models;
 using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Interfaces;
@@ -31,12 +32,14 @@ namespace FatalForceServer.Engine
             _lastWorldState.PlayersStates.Add(playerState);
         }
 
-        public void MovePlayer(int clientId, PlayerMovementDirectionEnum direction)
+        public void MovePlayer(int clientId, int packetSequenceNumber, PlayerMovementDirectionEnum direction)
         {
             var playerState = _lastWorldState.PlayersStates.FirstOrDefault(p => p.Id == clientId);
 
             if (playerState == null)
                 return;
+
+            playerState.LastPacketSequenceNumber = packetSequenceNumber;
 
             switch (direction)
             {
@@ -63,6 +66,8 @@ namespace FatalForceServer.Engine
                 default:
                     break;
             }
+
+            //Log.Info($"Player with {playerState.Id} id position x: {playerState.X}, y: {playerState.Y}, Pakcet num: {playerState.LastPacketSequenceNumber}");
         }
 
         public WorldState GetLastWorldState()

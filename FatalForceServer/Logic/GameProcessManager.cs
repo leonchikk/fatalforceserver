@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FatalForceServer.Core;
 using FatalForceServer.Core.Packets;
 using FatalForceServer.Engine.Interfaces;
 
@@ -63,7 +64,7 @@ namespace FatalForceServer.Logic
             {
                 var movementPacket = packet as MovementPacket;
 
-                _gameStateManager.MovePlayer(movementPacket.ClientId, movementPacket.Direction);
+                _gameStateManager.MovePlayer(movementPacket.ClientId, movementPacket.PacketSequenceNumber, movementPacket.Direction);
             }
         }
     }
